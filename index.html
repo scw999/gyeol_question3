@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서로의 '결' 알아보기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto+Sans+KR', sans-serif;
+        }
+        .question-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .result-tag {
+            background-color: #f0f0f0;
+            color: #374151;
+        }
+        .brain-type-header {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 700; /* font-bold */
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            padding-bottom: 0.5rem; /* pb-2 */
+        }
+        .male-header {
+            border-bottom: 2px solid #93c5fd; /* border-blue-300 */
+            color: #1e40af; /* text-blue-800 */
+        }
+        .female-header {
+            border-bottom: 2px solid #f9a8d4; /* border-pink-300 */
+            color: #9d174d; /* text-pink-800 */
+        }
+        /* Animation for result elements */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+        .fade-in-delay-1 { animation-delay: 0.2s; }
+        .fade-in-delay-2 { animation-delay: 0.4s; }
+        .fade-in-delay-3 { animation-delay: 0.6s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div id="main-container" class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">서로의 '결' 알아보기</h1>
+            <p class="mt-2 text-gray-600">질문에 답하고 두 분의 고유한 '결'과 매칭률을 확인해보세요.</p>
+        </header>
+
+        <div id="question-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-blue-50 p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-center mb-6 text-blue-800">🤵‍♂️ 남자</h2>
+                    <div id="male-questions" class="space-y-6"></div>
+                </div>
+
+                <div class="bg-pink-50 p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-center mb-6 text-pink-800">👰‍♀️ 여자</h2>
+                    <div id="female-questions" class="space-y-6"></div>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <div id="warning-message" class="mb-4 text-center text-red-500 font-semibold hidden">
+                    모든 질문에 답변해주세요!
+                </div>
+                <button id="calculate-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-lg transition-transform transform hover:scale-105 shadow-lg">
+                    결과 확인하기
+                </button>
+            </div>
+        </div>
+        
+        <div id="results" class="hidden mt-8 md:mt-12 bg-white p-8 rounded-2xl shadow-2xl text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 opacity-0 fade-in">최종 결과</h2>
+            
+            <div class="my-8 opacity-0 fade-in fade-in-delay-1">
+                <p class="text-lg text-gray-600">두 분의 가치관 매칭률은...</p>
+                <p id="matching-score" class="text-6xl font-extrabold text-indigo-500 my-4">0%</p>
+                <div class="w-full bg-gray-200 rounded-full h-4 max-w-lg mx-auto">
+                    <div id="score-bar" class="bg-indigo-500 h-4 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-2">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">✨ 우리의 종합 '결'</h3>
+                <div id="combined-gradient" class="w-full h-32 md:h-40 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-inner">
+                     <p id="gradient-text" class="text-white text-3xl font-bold" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Our Vibe</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 opacity-0 fade-in fade-in-delay-3">
+                <!-- 남자 결과 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border">
+                    <p class="text-gray-600 font-semibold">🤵‍♂️ 남자의 '결'은...</p>
+                    <div id="result-visual-male" class="mt-4 p-6 rounded-lg transition-all duration-500">
+                        <h3 id="result-profile-text-male" class="text-2xl font-extrabold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.4);"></h3>
+                    </div>
+                    <div class="mt-4 text-left">
+                        <p id="result-group-name-male" class="font-bold text-lg text-gray-800"></p>
+                        <p id="result-group-description-male" class="text-gray-600 mt-1 text-sm"></p>
+                    </div>
+                </div>
+                <!-- 여자 결과 -->
+                <div class="bg-white p-6 rounded-xl shadow-lg border">
+                    <p class="text-gray-600 font-semibold">👰‍♀️ 여자의 '결'은...</p>
+                    <div id="result-visual-female" class="mt-4 p-6 rounded-lg transition-all duration-500">
+                        <h3 id="result-profile-text-female" class="text-2xl font-extrabold text-white" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.4);"></h3>
+                    </div>
+                    <div class="mt-4 text-left">
+                        <p id="result-group-name-female" class="font-bold text-lg text-gray-800"></p>
+                        <p id="result-group-description-female" class="text-gray-600 mt-1 text-sm"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-3">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">💌 두 분의 관계 조언</h3>
+                <p id="relationship-advice" class="text-gray-700 bg-gray-100 p-4 rounded-lg"></p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-3">
+                 <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">남자의 상세 성향 태그</h3>
+                    <div id="male-tags" class="flex flex-wrap gap-2 justify-center"></div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">여자의 상세 성향 태그</h3>
+                    <div id="female-tags" class="flex flex-wrap gap-2 justify-center"></div>
+                </div>
+            </div>
+
+            <div class="mt-12 opacity-0 fade-in fade-in-delay-3">
+                 <button id="retry-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-8 rounded-full text-lg">
+                    다시하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // --- 1) Action (나의 행동 유형) ---
+            {
+                id: 'q1', brainType: 'Action (나의 행동 유형)', text: '인스타그램 스토리에 사진을 올린다면 어떤 사진을 선택하시겠어요?',
+                options: [ { text: '아름다운 자연경관에서 찍은 내 사진 (경험중시형)', tag: '#경험중시형'}, { text: '미슐랭 5스타 고급 레스토랑의 음식 사진 (성취지향형)', tag: '#성취지향형'}, { text: '친구들과 함께 파티를 즐기는 역동적인 사진 (사교형)', tag: '#사교형'}, { text: '인스타그램 스토리는 잘 올리지 않는 편이다 (안정지향형)', tag: '#안정지향형'} ]
+            },
+            {
+                id: 'q2', brainType: 'Action (나의 행동 유형)', text: '선호하는 운동 스타일은 무엇인가요?',
+                options: [ { text: '혼자 집중하며 즐기는 운동 (러닝, 헬스 등) (자기계발형)', tag: '#자기계발형'}, { text: '파트너나 팀과 함께하는 운동 (테니스, 축구 등) (활동적인)', tag: '#활동적인'}, { text: '운동은 별로 즐기지 않는다 (정적인)', tag: '#정적인'} ]
+            },
+            {
+                id: 'q22', brainType: 'Action (나의 행동 유형)', text: '당신의 이상적인 주말은 어떤 모습에 가까운가요?',
+                options: [ { text: '집에서 편안하게 휴식을 취하며 재충전한다. (집순이/집돌이)', tag: '#집순이/집돌이'}, { text: '새로운 것을 배우거나 취미 활동에 몰두한다. (자기계발형)', tag: '#자기계발형'}, { text: '친구들을 만나거나 새로운 사람들과 어울린다. (사교형)', tag: '#사교형'}, { text: '가까운 곳으로 여행을 떠나 새로운 경험을 한다. (모험추구형)', tag: '#모험추구형'} ]
+            },
+            // --- 2) Emotion (나의 감정 및 관계 유형) ---
+            {
+                id: 'q4', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '꿈꾸는 프러포즈는 어떤 모습인가요?',
+                options: [ { text: '분위기 좋은 레스토랑에서의 로맨틱한 프러포즈 (낭만주의형)', tag: '#낭만주의형'}, { text: '많은 사람들 앞에서의 깜짝 프러포즈 (이벤트선호)', tag: '#이벤트선호'}, { text: '둘만의 추억이 담긴 장소에서의 진솔한 프러포즈 (관계중심형)', tag: '#관계중심형'}, { text: '화려함보다 진심이 담긴 반지와 편지 (실용주의형)', tag: '#실용주의형'} ]
+            },
+            {
+                id: 'q5', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '연인이 했을 때 가장 설레는 행동은 무엇인가요?',
+                options: [ { text: '내가 했던 말을 기억하고 세심하게 챙겨줄 때 (세심함중시)', tag: '#세심함중시'}, { text: '힘든 하루 끝에 말없이 꼭 안아줄 때 (스킨십중시)', tag: '#스킨십중시'}, { text: '나의 일이나 성과를 진심으로 응원하고 지지해줄 때 (정서적지지)', tag: '#정서적지지'}, { text: '함께 시간을 보낼 때 나에게 온전히 집중해줄 때 (시간공유형)', tag: '#시간공유형'} ]
+            },
+             {
+                id: 'q23', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '공공장소에서의 애정표현(스킨십)에 대해 어떻게 생각하시나요?',
+                options: [ { text: '손 잡는 것 정도는 괜찮지만, 그 이상은 조심스럽다. (보수적가치관)', tag: '#보수적가치관'}, { text: '주변에 피해만 주지 않는다면 자유롭게 표현할 수 있다. (자유로운표현)', tag: '#자유로운표현'}, { text: '애정표현은 둘만 있는 사적인 공간에서 하는 것이 좋다. (사생활중시)', tag: '#사생활중시'}, { text: '장소와 분위기에 따라 유연하게 달라질 수 있다. (상황적응형)', tag: '#상황적응형'} ]
+            },
+            {
+                id: 'q26', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '비 오는 날, 퇴근 시간에 맞춰 연인이 회사 앞에 우산을 들고 나타났습니다. 당신의 반응은?',
+                options: [ { text: '우와, 어떻게 알고 왔어? 와줘서 정말 고마워! (감정표현형)', tag: '#감정표현형'}, { text: '괜찮은데 왜 고생스럽게 왔어~ 걱정되잖아. (배려형)', tag: '#배려형'}, { text: '마침 보고 싶었는데, 이렇게 깜짝으로 보니 더 좋다! (낭만주의형)', tag: '#낭만주의형'}, { text: '잘 왔다! 이왕 만났으니 맛있는 거 먹으러 갈까? (실용주의형)', tag: '#실용주의형'} ]
+            },
+            {
+                id: 'q17', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '내 연인이 내 친구의 깻잎을 떼주는 것을 보았습니다. 당신의 생각은?',
+                options: [ { text: '아무렇지 않다. 그럴 수 있다. (쿨한연애)', tag: '#쿨한연애'}, { text: '기분은 좀 그렇지만 티 내지 않는다. (감정조절형)', tag: '#감정조절형'}, { text: '연인에게 장난스럽게 서운함을 표현한다. (관계중심형)', tag: '#관계중심형'}, { text: '절대 안된다. 그 자리에서 이야기한다. (원칙주의형)', tag: '#원칙주의형'} ]
+            },
+            {
+                id: 'q18', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '선호하는 반려동물이 있나요?',
+                options: [ { text: '활동적이고 애교 많은 강아지가 좋다. (활동적인)', tag: '#활동적인'}, { text: '독립적이고 차분한 고양이가 좋다. (차분한)', tag: '#차분한'}, { text: '둘 다 좋지만, 키울 자신은 없다. (현실주의형)', tag: '#현실주의형'}, { text: '반려동물을 키우는 것은 선호하지 않는다. (개인주의형)', tag: '#개인주의형'} ]
+            },
+            // --- 3) Thinking (나의 가치관 및 생각 유형) ---
+            {
+                id: 'q11', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '성공한 친구가 확실한 투자처라며 주식 정보를 주었습니다. 어떻게 하시겠어요?',
+                options: [ { text: '친구를 믿고 \'영끌\' 대출을 해서 투자한다 (과감한투자)', tag: '#과감한투자'}, { text: '현재 보유한 현금 전부를 투자한다 (공격적투자)', tag: '#공격적투자'}, { text: '여유 자금의 절반 정도만 신중하게 투자한다 (안정적투자)', tag: '#안정적투자'}, { text: '스스로 분석 없이는 투자하지 않는다 (원칙주의형)', tag: '#원칙주의형'} ]
+            },
+             {
+                id: 'q19', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '연인과 갈등이 생겼을 때, 당신은 어떻게 해결하나요?',
+                options: [ { text: '감정이 가라앉을 때까지 기다렸다가 차분히 대화한다. (논리적대화)', tag: '#논리적대화'}, { text: '갈등이 길어지는게 싫어 빨리 사과하고 넘어간다. (갈등회피형)', tag: '#갈등회피형'}, { text: '감정을 솔직하게 모두 표현해야 직성이 풀린다. (감정표현형)', tag: '#감정표현형'}, { text: '함께 문제를 분석하고 해결책을 찾으려 노력한다. (문제해결형)', tag: '#문제해결형'} ]
+            },
+            {
+                id: 'q27', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '배우자가 청소기를 돌렸는데 구석에 먼지가 그대로 있습니다. 당신의 반응은?',
+                 options: [ { text: '우와, 청소해줬네! 정말 고마워~ (긍정적강화)', tag: '#긍정적강화'}, { text: '고마워! 다음엔 이쪽 구석도 한번 더 신경 써주면 완벽할 것 같아! (피드백제공)', tag: '#피드백제공'}, { text: '말없이 내가 직접 나머지 먼지를 청소한다. (갈등회피형)', tag: '#갈등회피형'}, { text: '그 정도는 괜찮아. 신경 쓰지 않는다. (자유로운)', tag: '#자유로운'} ]
+            },
+            {
+                id: 'q24', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '결혼 후 양가 부모님 댁 방문 빈도는 어느 정도가 적당하다고 생각하시나요?',
+                options: [ { text: '명절이나 생신 등 특별한 날에만 방문한다. (독립성중시)', tag: '#독립성중시'}, { text: '한두 달에 한 번 정도는 정기적으로 찾아뵙는다. (가족중심형)', tag: '#가족중심형'}, { text: '정해진 것 없이, 필요하거나 원할 때 자유롭게 왕래한다. (자유추구형)', tag: '#자유추구형'}, { text: '가까이 살면서 자주 왕래하며 가깝게 지낸다. (관계중심형)', tag: '#관계중심형'} ]
+            },
+             {
+                id: 'q25', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '가사(집안일) 분담에 대한 당신의 생각은?',
+                options: [ { text: '각자 잘하는 일을 정해서 명확하게 역할을 나눈다. (효율중시형)', tag: '#효율중시형'}, { text: '정해놓지 않고, 시간이 되거나 먼저 보는 사람이 한다. (자율형)', tag: '#자율형'}, { text: '주말 등 특정 시간을 정해 함께 집중적으로 처리한다. (계획형)', tag: '#계획형'}, { text: '가사도우미, 식기세척기 등 시스템을 적극 활용한다. (편리성추구)', tag: '#편리성추구'} ]
+            },
+            {
+                id: 'q12', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '이상적인 자녀 수는 몇 명인가요?',
+                options: [ { text: '딩크(DINK)족, 자녀 없이 둘만의 삶 (개인주의형)', tag: '#개인주의형'}, { text: '한 명의 자녀에게 집중 (계획형)', tag: '#계획형'}, { text: '안정적이고 화목한 두 명의 자녀 (가정중심형)', tag: '#가정중심형'}, { text: '다둥이 가정을 꿈꿔요 (다자녀선호)', tag: '#다자녀선호'} ]
+            },
+            {
+                id: 'q13', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '선호하는 부부의 경제 활동 형태는 무엇인가요?',
+                options: [ { text: '각자의 커리어를 존중하는 맞벌이 (성장지향형)', tag: '#성장지향형'}, { text: '상황에 따라 유연하게, 가능하면 맞벌이 (상황적응형)', tag: '#상황적응형'}, { text: '한 사람은 경제활동, 한 사람은 가정을 돌보는 외벌이 (전통적가치관)', tag: '#전통적가치관'}, { text: '경제적 여유만 있다면, 자유롭게 살고 싶어요 (자유추구형)', tag: '#자유추구형'} ]
+            },
+            {
+                id: 'q15', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '당신이 결혼을 원하는 가장 큰 이유는 무엇인가요?',
+                options: [ { text: '정서적 안정감과 평생의 동반자를 얻기 위해 (안정지향형)', tag: '#안정지향형'}, { text: '사랑하는 사람과 가정을 꾸리기 위해 (가정중심형)', tag: '#가정중심형'}, { text: '더 나은 미래를 함께 계획하고 성장하기 위해 (성장지향형)', tag: '#성장지향형'}, { text: '함께 다양한 경험을 하며 인생을 더 즐겁게 살기 위해 (모험추구형)', tag: '#모험추구형'} ]
+            },
+            {
+                id: 'q16', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '신혼집을 구한다면, 당신의 우선순위는 어디에 있나요?',
+                options: [ { text: '미래 가치를 보고 서울 중심지 아파트 (미래가치중시)', tag: '#미래가치중시'}, { text: '현재의 안정을 위해 경기도 신축 아파트 (현재안정중시)', tag: '#현재안정중시'}, { text: '직주근접이 가장 중요 (실용주의형)', tag: '#실용주의형'}, { text: '개인의 취향이 담긴 인테리어의 집 (심미주의형)', tag: '#심미주의형'} ]
+            }
+        ];
+        
+        const tagGroups = {
+            EMOTIONAL_CONNECT: { tags: ['#낭만주의형', '#관계중심형', '#감성형', '#세심함중시', '#스킨십중시', '#정서적지지', '#배려형', '#감정표현형', '#긍정적강화', '#가족중심형', '#다자녀선호'] },
+            PRACTICAL_RATIONAL: { tags: ['#실용주의형', '#원칙주의형', '#현실주의형', '#이성적판단', '#논리적대화', '#문제해결형', '#효율중시형', '#피드백제공', '#미래가치중시'] },
+            STABILITY_ORIENTED: { tags: ['#안정지향형', '#안정적투자', '#계획형', '#집순이/집돌이', '#보수적가치관', '#현재안정중시', '#전통적가치관', '#정적인'] },
+            ACTIVE_EXPERIENCE: { tags: ['#경험중시형', '#성취지향형', '#사교형', '#활동적인', '#모험추구형', '#이벤트선호', '#과감한투자', '#공격적투자', '#자기계발형', '#성장지향형'] },
+            AUTONOMY_FLEXIBILITY: { tags: ['#개인주의형', '#쿨한연애', '#자유로운표현', '#사생활중시', '#자유추구형', '#독립성중시', '#자율형', '#갈등회피형', '#자유로운'] },
+            ADAPTIVE_BALANCED: { tags: ['#상황적응형', '#감정조절형', '#편리성추구', '#심미주의형', '#차분한'] }
+        };
+
+        const sensoryProfiles = {
+            EMOTIONAL_CONNECT: { name: "감성/관계 중심", description: "사람들과의 따뜻한 유대와 감정적 교류에서 행복을 느끼는 사람입니다. 타인의 마음에 깊이 공감하며, 관계를 통해 안정감을 얻는 섬세한 '결'을 가졌습니다.", background: "bg-pink-400", colorCode: "#F9A8D4" },
+            PRACTICAL_RATIONAL: { name: "실용/이성 중심", description: "명확한 논리와 효율성을 중요하게 생각하며, 문제 해결에 뛰어난 능력을 보입니다. 감정보다 이성적인 판단을 우선시하는 시원하고 투명한 '결'을 가졌습니다.", background: "bg-blue-500", colorCode: "#3B82F6" },
+            STABILITY_ORIENTED: { name: "안정 지향", description: "예측 가능하고 편안한 환경에서 가장 큰 안정감을 느낍니다. 꾸준함과 신뢰를 바탕으로 삶을 단단하게 가꾸어 나가는 차분하고 깊은 '결'을 가졌습니다.", background: "bg-green-500", colorCode: "#22C55E" },
+            ACTIVE_EXPERIENCE: { name: "활동/경험 지향", description: "새로운 도전과 경험을 통해 삶의 에너지를 얻는 열정적인 사람입니다. 끊임없이 성장하고 세상을 탐험하고자 하는 반짝이는 '결'을 가졌습니다.", background: "bg-amber-500", colorCode: "#F59E0B" },
+            AUTONOMY_FLEXIBILITY: { name: "자율/유연 지향", description: "자신만의 고유한 개성과 자유를 무엇보다 중요하게 생각합니다. 정해진 틀에 얽매이지 않고, 자신만의 속도와 방식으로 세상을 살아가는 신비로운 '결'을 가졌습니다.", background: "bg-purple-500", colorCode: "#8B5CF6" },
+            ADAPTIVE_BALANCED: { name: "상황적응/균형", description: "어떤 상황에서도 유연하게 대처하며, 갈등보다는 조화를 추구합니다. 치우치지 않는 균형감각으로 주변과 자연스럽게 어우러지는 맑고 깨끗한 '결'을 가졌습니다.", background: "bg-gray-500", colorCode: "#6B7280" }
+        };
+
+        const sensoryWords = {
+            EMOTIONAL_CONNECT: { texture: ["따뜻한", "부드러운", "포근한"], color: ["핑크빛", "복숭아빛"], scent: ["꽃향기", "달콤한 과일향"], shape: ["솜사탕", "실크 스카프", "구름"] },
+            PRACTICAL_RATIONAL: { texture: ["시원한", "매끄러운", "단단한"], color: ["하늘색", "회색빛"], scent: ["비 냄새", "민트향"], shape: ["수정", "유리구슬", "얼음 조각"] },
+            STABILITY_ORIENTED: { texture: ["단단한", "차분한", "편안한"], color: ["연두색", "갈색빛"], scent: ["나무향", "젖은 흙냄새"], shape: ["조약돌", "나뭇잎", "이끼"] },
+            ACTIVE_EXPERIENCE: { texture: ["뜨거운", "톡톡 튀는", "짜릿한"], color: ["노란색", "주황색"], scent: ["상큼한 레몬향", "타오르는 장작 냄새"], shape: ["별", "불꽃", "보석 원석"] },
+            AUTONOMY_FLEXIBILITY: { texture: ["신비로운", "오묘한", "가벼운"], color: ["보랏빛", "남색"], scent: ["깊은 밤공기 냄새", "고요한 숲의 향"], shape: ["안개", "자수정", "깃털"] },
+            ADAPTIVE_BALANCED: { texture: ["깨끗한", "맑은", "투명한"], color: ["흰색", "투명한"], scent: ["무향(無香)", "맑은 공기 냄새"], shape: ["물방울", "이슬", "백자"] }
+        };
+
+
+        const maleQuestionsContainer = document.getElementById('male-questions');
+        const femaleQuestionsContainer = document.getElementById('female-questions');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const resultsContainer = document.getElementById('results');
+        const warningMessage = document.getElementById('warning-message');
+        const questionSection = document.getElementById('question-section');
+        const retryBtn = document.getElementById('retry-btn');
+        const combinedGradientEl = document.getElementById('combined-gradient');
+        
+        const matchingScoreEl = document.getElementById('matching-score');
+        const scoreBarEl = document.getElementById('score-bar');
+
+        const resultVisualMaleEl = document.getElementById('result-visual-male');
+        const resultProfileTextMaleEl = document.getElementById('result-profile-text-male');
+        const resultGroupNameMaleEl = document.getElementById('result-group-name-male');
+        const resultGroupDescriptionMaleEl = document.getElementById('result-group-description-male');
+        const maleTagsEl = document.getElementById('male-tags');
+
+        const resultVisualFemaleEl = document.getElementById('result-visual-female');
+        const resultProfileTextFemaleEl = document.getElementById('result-profile-text-female');
+        const resultGroupNameFemaleEl = document.getElementById('result-group-name-female');
+        const resultGroupDescriptionFemaleEl = document.getElementById('result-group-description-female');
+        const femaleTagsEl = document.getElementById('female-tags');
+        
+        const relationshipAdviceEl = document.getElementById('relationship-advice');
+
+        function findTagGroupKey(tag) {
+            for (const key in tagGroups) {
+                if (tagGroups[key].tags.includes(tag)) { return key; }
+            }
+            return null;
+        }
+        
+        function createQuestionHTML(q, gender) {
+            const optionsHTML = q.options.map((opt, index) => `
+                <label class="block border border-gray-200 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
+                    <input type="radio" name="${q.id}-${gender}" value="${index}" data-tag="${opt.tag}" class="mr-2">
+                    ${opt.text}
+                </label>
+            `).join('');
+
+            return `<div class="question-card bg-white p-4 rounded-lg shadow-sm border">
+                        <p class="font-semibold mb-3 text-gray-800">${q.text}</p>
+                        <div class="space-y-2">${optionsHTML}</div>
+                    </div>`;
+        }
+
+
+        function renderQuestions() {
+            let maleHTML = '', femaleHTML = '', lastMaleBrainType = '', lastFemaleBrainType = '';
+            questions.forEach(q => {
+                if(q.brainType !== lastMaleBrainType) { maleHTML += `<h3 class="brain-type-header male-header">${q.brainType}</h3>`; lastMaleBrainType = q.brainType; }
+                maleHTML += createQuestionHTML(q, 'male');
+                if(q.brainType !== lastFemaleBrainType) { femaleHTML += `<h3 class="brain-type-header female-header">${q.brainType}</h3>`; lastFemaleBrainType = q.brainType; }
+                femaleHTML += createQuestionHTML(q, 'female');
+            });
+            maleQuestionsContainer.innerHTML = maleHTML;
+            femaleQuestionsContainer.innerHTML = femaleHTML;
+        }
+
+        function getRandomItem(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        
+        function generateProfile(groupKey) {
+            const profileWords = sensoryWords[groupKey];
+            const texture = getRandomItem(profileWords.texture);
+            const color = getRandomItem(profileWords.color);
+            const scent = getRandomItem(profileWords.scent);
+            const shape = getRandomItem(profileWords.shape);
+            return `${texture} ${color} ${scent}의 ${shape}`;
+        }
+
+        function calculateResults() {
+            const totalQuestions = questions.length;
+            const maleAnsweredCount = document.querySelectorAll('#male-questions input:checked').length;
+            const femaleAnsweredCount = document.querySelectorAll('#female-questions input:checked').length;
+
+            if (maleAnsweredCount < totalQuestions || femaleAnsweredCount < totalQuestions) {
+                warningMessage.classList.remove('hidden');
+                return;
+            }
+            warningMessage.classList.add('hidden');
+            
+            let totalScore = 0;
+            const maleTags = {}, femaleTags = {}, maleGroupCounts = {}, femaleGroupCounts = {};
+
+            questions.forEach((q) => {
+                const maleAnswerNode = document.querySelector(`input[name="${q.id}-male"]:checked`);
+                const femaleAnswerNode = document.querySelector(`input[name="${q.id}-female"]:checked`);
+                const maleTag = maleAnswerNode.dataset.tag;
+                const femaleTag = femaleAnswerNode.dataset.tag;
+                
+                if (maleAnswerNode.value === femaleAnswerNode.value) { totalScore += 1; } 
+                else {
+                    const maleGroupKey = findTagGroupKey(maleTag);
+                    const femaleGroupKey = findTagGroupKey(femaleTag);
+                    if (maleGroupKey && maleGroupKey === femaleGroupKey) { totalScore += 0.5; }
+                }
+                
+                maleTags[maleTag] = (maleTags[maleTag] || 0) + 1;
+                femaleTags[femaleTag] = (femaleTags[femaleTag] || 0) + 1;
+                
+                const maleGroupKey = findTagGroupKey(maleTag);
+                if(maleGroupKey) maleGroupCounts[maleGroupKey] = (maleGroupCounts[maleGroupKey] || 0) + 1;
+                
+                const femaleGroupKey = findTagGroupKey(femaleTag);
+                if(femaleGroupKey) femaleGroupCounts[femaleGroupKey] = (femaleGroupCounts[femaleGroupKey] || 0) + 1;
+            });
+
+            const score = Math.round((totalScore / totalQuestions) * 100);
+            matchingScoreEl.textContent = `${score}%`;
+            setTimeout(() => { scoreBarEl.style.width = `${score}%`; }, 100);
+
+            const dominantMaleGroupKey = Object.keys(maleGroupCounts).length > 0 ? Object.keys(maleGroupCounts).reduce((a, b) => maleGroupCounts[a] > maleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
+            const dominantFemaleGroupKey = Object.keys(femaleGroupCounts).length > 0 ? Object.keys(femaleGroupCounts).reduce((a, b) => femaleGroupCounts[a] > femaleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
+            
+            const maleProfileData = sensoryProfiles[dominantMaleGroupKey];
+            const femaleProfileData = sensoryProfiles[dominantFemaleGroupKey];
+
+            // Set Gradient
+            combinedGradientEl.style.background = `linear-gradient(to right, ${maleProfileData.colorCode}, ${femaleProfileData.colorCode})`;
+
+            // Male Profile UI
+            resultVisualMaleEl.className = `mt-4 p-6 rounded-lg transition-all duration-500 ${maleProfileData.background}`;
+            resultProfileTextMaleEl.textContent = generateProfile(dominantMaleGroupKey);
+            resultGroupNameMaleEl.textContent = `남자는 '${maleProfileData.name}'의 결`;
+            resultGroupDescriptionMaleEl.textContent = maleProfileData.description;
+            maleTagsEl.innerHTML = Object.entries(maleTags).sort((a, b) => b[1] - a[1]).map(([tag, count]) => `<span class="result-tag font-medium py-1 px-3 rounded-full text-sm">${tag}${count > 1 ? ` x${count}` : ''}</span>`).join('');
+            
+            // Female Profile UI
+            resultVisualFemaleEl.className = `mt-4 p-6 rounded-lg transition-all duration-500 ${femaleProfileData.background}`;
+            resultProfileTextFemaleEl.textContent = generateProfile(dominantFemaleGroupKey);
+            resultGroupNameFemaleEl.textContent = `여자는 '${femaleProfileData.name}'의 결`;
+            resultGroupDescriptionFemaleEl.textContent = femaleProfileData.description;
+            femaleTagsEl.innerHTML = Object.entries(femaleTags).sort((a, b) => b[1] - a[1]).map(([tag, count]) => `<span class="result-tag font-medium py-1 px-3 rounded-full text-sm">${tag}${count > 1 ? ` x${count}` : ''}</span>`).join('');
+            
+            if (dominantMaleGroupKey === dominantFemaleGroupKey) {
+                relationshipAdviceEl.textContent = `두 분은 같은 '${maleProfileData.name}' 성향으로, 핵심 가치관이 매우 유사하여 서로를 깊이 이해하는 커플입니다. 함께 있을 때 가장 편안하고 안정적인 관계를 만들어갈 수 있습니다.`;
+            } else {
+                relationshipAdviceEl.textContent = `두 분은 각각 '${maleProfileData.name}', '${femaleProfileData.name}' 성향으로, 서로 다른 매력을 가졌습니다. 이 다름은 서로의 세계를 넓혀주고 함께 성장하는 좋은 자극이 될 것입니다. 서로의 '결'을 존중하고 배우는 자세가 중요합니다.`;
+            }
+
+            questionSection.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            document.querySelectorAll('#results .fade-in').forEach(el => el.style.opacity = 0);
+            setTimeout(() => {
+                 document.querySelectorAll('#results .fade-in').forEach(el => el.classList.add('is-visible'));
+            }, 10);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        retryBtn.addEventListener('click', () => {
+            resultsContainer.classList.add('hidden');
+            questionSection.classList.remove('hidden');
+            const allRadios = document.querySelectorAll('input[type="radio"]');
+            allRadios.forEach(radio => radio.checked = false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        calculateBtn.addEventListener('click', calculateResults);
+
+        renderQuestions();
+    </script>
+</body>
+</html>
+
