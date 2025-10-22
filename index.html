@@ -36,6 +36,12 @@
             border-bottom: 2px solid #f9a8d4; /* border-pink-300 */
             color: #9d174d; /* text-pink-800 */
         }
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
         /* Animation for result elements */
         .fade-in {
             animation: fadeIn 1s ease-in-out forwards;
@@ -43,6 +49,8 @@
         .fade-in-delay-1 { animation-delay: 0.2s; }
         .fade-in-delay-2 { animation-delay: 0.4s; }
         .fade-in-delay-3 { animation-delay: 0.6s; }
+        .fade-in-delay-4 { animation-delay: 0.8s; }
+
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -57,6 +65,32 @@
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800">서로의 '결' 알아보기</h1>
             <p class="mt-2 text-gray-600">질문에 답하고 두 분의 고유한 '결'과 매칭률을 확인해보세요.</p>
         </header>
+        
+        <div class="mb-8 max-w-4xl mx-auto bg-indigo-50 p-4 rounded-lg text-sm text-gray-700 border border-indigo-200">
+            <details>
+                <summary class="font-semibold text-center text-indigo-800 mb-2 cursor-pointer">💡 점수 계산 방식 안내 (클릭하여 확인)</summary>
+                <div class="mt-2 space-y-3">
+                    <div>
+                        <p class="font-semibold">👫 최종 매칭률 계산:</p>
+                        <p>
+                            - 두 분의 답변이 <strong>완전히 일치</strong>하면 <strong>2점</strong>을 얻습니다.<br>
+                            - 답변이 다르더라도 비슷한 <strong>'성향 그룹'</strong>에 속하면 <strong>0.5점</strong>을 얻습니다.<br>
+                            - 이 점수들을 합산하여 최종 매칭률(%)을 계산합니다.
+                        </p>
+                    </div>
+                    <div>
+                        <p class="font-semibold">👤 개인 '결'별 수치 및 유사도 계산:</p>
+                        <p>- 각 '결'의 <strong>개인 수치</strong>는 해당 성향 그룹에 속하는 답변을 선택한 횟수입니다.<br>
+                           - '결'별 <strong>유사도(%)</strong>는 두 분의 개인 수치를 바탕으로 얼마나 비슷한 분포를 보이는지 계산한 값입니다.
+                        </p>
+                    </div>
+                    <p class="font-semibold mt-2">※ 6가지 성향 그룹 (결)</p>
+                     <div id="group-descriptions" class="space-y-3 text-xs">
+                        <!-- Descriptions will be injected here by JS -->
+                    </div>
+                </div>
+            </details>
+        </div>
 
         <div id="question-section">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -91,14 +125,20 @@
                 </div>
             </div>
 
+            <!-- 상세 점수 분석 -->
             <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-2">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">📈 '결'별 상세 분석</h3>
+                <div id="score-breakdown" class="max-w-3xl mx-auto text-left space-y-4"></div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-3">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">✨ 우리의 종합 '결'</h3>
                 <div id="combined-gradient" class="w-full h-32 md:h-40 rounded-2xl flex items-center justify-center relative overflow-hidden shadow-inner">
                      <p id="gradient-text" class="text-white text-3xl font-bold" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Our Vibe</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 opacity-0 fade-in fade-in-delay-3">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 opacity-0 fade-in fade-in-delay-4">
                 <!-- 남자 결과 -->
                 <div class="bg-white p-6 rounded-xl shadow-lg border">
                     <p class="text-gray-600 font-semibold">🤵‍♂️ 남자의 '결'은...</p>
@@ -123,12 +163,12 @@
                 </div>
             </div>
 
-            <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-3">
+            <div class="mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-4">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">💌 두 분의 관계 조언</h3>
                 <p id="relationship-advice" class="text-gray-700 bg-gray-100 p-4 rounded-lg"></p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 pt-6 border-t opacity-0 fade-in fade-in-delay-4">
                  <div>
                     <h3 class="text-lg font-bold text-gray-800 mb-4">남자의 상세 성향 태그</h3>
                     <div id="male-tags" class="flex flex-wrap gap-2 justify-center"></div>
@@ -139,7 +179,7 @@
                 </div>
             </div>
 
-            <div class="mt-12 opacity-0 fade-in fade-in-delay-3">
+            <div class="mt-12 opacity-0 fade-in fade-in-delay-4">
                  <button id="retry-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-8 rounded-full text-lg">
                     다시하기
                 </button>
@@ -227,8 +267,8 @@
         ];
         
         const tagGroups = {
-            EMOTIONAL_CONNECT: { tags: ['#낭만주의형', '#관계중심형', '#감성형', '#세심함중시', '#스킨십중시', '#정서적지지', '#배려형', '#감정표현형', '#긍정적강화', '#가족중심형', '#다자녀선호'] },
-            PRACTICAL_RATIONAL: { tags: ['#실용주의형', '#원칙주의형', '#현실주의형', '#이성적판단', '#논리적대화', '#문제해결형', '#효율중시형', '#피드백제공', '#미래가치중시'] },
+            EMOTIONAL_CONNECT: { tags: ['#낭만주의형', '#관계중심형', '#세심함중시', '#스킨십중시', '#정서적지지', '#배려형', '#감정표현형', '#긍정적강화', '#가족중심형', '#다자녀선호', '#시간공유형'] },
+            PRACTICAL_RATIONAL: { tags: ['#실용주의형', '#원칙주의형', '#현실주의형', '#논리적대화', '#문제해결형', '#효율중시형', '#피드백제공', '#미래가치중시'] },
             STABILITY_ORIENTED: { tags: ['#안정지향형', '#안정적투자', '#계획형', '#집순이/집돌이', '#보수적가치관', '#현재안정중시', '#전통적가치관', '#정적인'] },
             ACTIVE_EXPERIENCE: { tags: ['#경험중시형', '#성취지향형', '#사교형', '#활동적인', '#모험추구형', '#이벤트선호', '#과감한투자', '#공격적투자', '#자기계발형', '#성장지향형'] },
             AUTONOMY_FLEXIBILITY: { tags: ['#개인주의형', '#쿨한연애', '#자유로운표현', '#사생활중시', '#자유추구형', '#독립성중시', '#자율형', '#갈등회피형', '#자유로운'] },
@@ -236,12 +276,12 @@
         };
 
         const sensoryProfiles = {
-            EMOTIONAL_CONNECT: { name: "감성/관계 중심", description: "사람들과의 따뜻한 유대와 감정적 교류에서 행복을 느끼는 사람입니다. 타인의 마음에 깊이 공감하며, 관계를 통해 안정감을 얻는 섬세한 '결'을 가졌습니다.", background: "bg-pink-400", colorCode: "#F9A8D4" },
-            PRACTICAL_RATIONAL: { name: "실용/이성 중심", description: "명확한 논리와 효율성을 중요하게 생각하며, 문제 해결에 뛰어난 능력을 보입니다. 감정보다 이성적인 판단을 우선시하는 시원하고 투명한 '결'을 가졌습니다.", background: "bg-blue-500", colorCode: "#3B82F6" },
-            STABILITY_ORIENTED: { name: "안정 지향", description: "예측 가능하고 편안한 환경에서 가장 큰 안정감을 느낍니다. 꾸준함과 신뢰를 바탕으로 삶을 단단하게 가꾸어 나가는 차분하고 깊은 '결'을 가졌습니다.", background: "bg-green-500", colorCode: "#22C55E" },
-            ACTIVE_EXPERIENCE: { name: "활동/경험 지향", description: "새로운 도전과 경험을 통해 삶의 에너지를 얻는 열정적인 사람입니다. 끊임없이 성장하고 세상을 탐험하고자 하는 반짝이는 '결'을 가졌습니다.", background: "bg-amber-500", colorCode: "#F59E0B" },
-            AUTONOMY_FLEXIBILITY: { name: "자율/유연 지향", description: "자신만의 고유한 개성과 자유를 무엇보다 중요하게 생각합니다. 정해진 틀에 얽매이지 않고, 자신만의 속도와 방식으로 세상을 살아가는 신비로운 '결'을 가졌습니다.", background: "bg-purple-500", colorCode: "#8B5CF6" },
-            ADAPTIVE_BALANCED: { name: "상황적응/균형", description: "어떤 상황에서도 유연하게 대처하며, 갈등보다는 조화를 추구합니다. 치우치지 않는 균형감각으로 주변과 자연스럽게 어우러지는 맑고 깨끗한 '결'을 가졌습니다.", background: "bg-gray-500", colorCode: "#6B7280" }
+            EMOTIONAL_CONNECT: { name: "감성의 결", description: "사람들과의 따뜻한 유대와 감정적 교류에서 행복을 느끼는 사람입니다. 타인의 마음에 깊이 공감하며, 관계를 통해 안정감을 얻는 섬세한 '결'을 가졌습니다.", background: "bg-pink-400", colorCode: "#F9A8D4" },
+            PRACTICAL_RATIONAL: { name: "이성의 결", description: "명확한 논리와 효율성을 중요하게 생각하며, 문제 해결에 뛰어난 능력을 보입니다. 감정보다 이성적인 판단을 우선시하는 시원하고 투명한 '결'을 가졌습니다.", background: "bg-blue-500", colorCode: "#3B82F6" },
+            STABILITY_ORIENTED: { name: "안정의 결", description: "예측 가능하고 편안한 환경에서 가장 큰 안정감을 느낍니다. 꾸준함과 신뢰를 바탕으로 삶을 단단하게 가꾸어 나가는 차분하고 깊은 '결'을 가졌습니다.", background: "bg-green-500", colorCode: "#22C55E" },
+            ACTIVE_EXPERIENCE: { name: "활동의 결", description: "새로운 도전과 경험을 통해 삶의 에너지를 얻는 열정적인 사람입니다. 끊임없이 성장하고 세상을 탐험하고자 하는 반짝이는 '결'을 가졌습니다.", background: "bg-amber-500", colorCode: "#F59E0B" },
+            AUTONOMY_FLEXIBILITY: { name: "자유의 결", description: "자신만의 고유한 개성과 자유를 무엇보다 중요하게 생각합니다. 정해진 틀에 얽매이지 않고, 자신만의 속도와 방식으로 세상을 살아가는 신비로운 '결'을 가졌습니다.", background: "bg-purple-500", colorCode: "#8B5CF6" },
+            ADAPTIVE_BALANCED: { name: "조화의 결", description: "어떤 상황에서도 유연하게 대처하며, 갈등보다는 조화를 추구합니다. 치우치지 않는 균형감각으로 주변과 자연스럽게 어우러지는 맑고 깨끗한 '결'을 가졌습니다.", background: "bg-gray-500", colorCode: "#6B7280" }
         };
 
         const sensoryWords = {
@@ -262,9 +302,11 @@
         const questionSection = document.getElementById('question-section');
         const retryBtn = document.getElementById('retry-btn');
         const combinedGradientEl = document.getElementById('combined-gradient');
+        const groupDescriptionsEl = document.getElementById('group-descriptions');
         
         const matchingScoreEl = document.getElementById('matching-score');
         const scoreBarEl = document.getElementById('score-bar');
+        const scoreBreakdownEl = document.getElementById('score-breakdown');
 
         const resultVisualMaleEl = document.getElementById('result-visual-male');
         const resultProfileTextMaleEl = document.getElementById('result-profile-text-male');
@@ -314,6 +356,19 @@
             femaleQuestionsContainer.innerHTML = femaleHTML;
         }
 
+        function renderGroupDescriptions() {
+            let html = '';
+            for (const key in sensoryProfiles) {
+                const profile = sensoryProfiles[key];
+                const tags = tagGroups[key].tags.join(', ');
+                html += `<div class="p-2 bg-white rounded-md">
+                            <p><strong>${profile.name}:</strong> ${profile.description}</p>
+                            <p class="mt-1 text-gray-500">포함된 태그: ${tags}</p>
+                         </div>`;
+            }
+            groupDescriptionsEl.innerHTML = html;
+        }
+
         function getRandomItem(arr) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
@@ -340,20 +395,26 @@
             
             let totalScore = 0;
             const maleTags = {}, femaleTags = {}, maleGroupCounts = {}, femaleGroupCounts = {};
-
+            
             questions.forEach((q) => {
                 const maleAnswerNode = document.querySelector(`input[name="${q.id}-male"]:checked`);
                 const femaleAnswerNode = document.querySelector(`input[name="${q.id}-female"]:checked`);
                 const maleTag = maleAnswerNode.dataset.tag;
                 const femaleTag = femaleAnswerNode.dataset.tag;
                 
-                if (maleAnswerNode.value === femaleAnswerNode.value) { totalScore += 1; } 
-                else {
+                let currentScore = 0;
+                if (maleAnswerNode.value === femaleAnswerNode.value) { 
+                    currentScore = 2; 
+                } else {
                     const maleGroupKey = findTagGroupKey(maleTag);
                     const femaleGroupKey = findTagGroupKey(femaleTag);
-                    if (maleGroupKey && maleGroupKey === femaleGroupKey) { totalScore += 0.5; }
+                    if (maleGroupKey && maleGroupKey === femaleGroupKey) { 
+                        currentScore = 0.5; 
+                    }
                 }
                 
+                totalScore += currentScore;
+
                 maleTags[maleTag] = (maleTags[maleTag] || 0) + 1;
                 femaleTags[femaleTag] = (femaleTags[femaleTag] || 0) + 1;
                 
@@ -363,10 +424,69 @@
                 const femaleGroupKey = findTagGroupKey(femaleTag);
                 if(femaleGroupKey) femaleGroupCounts[femaleGroupKey] = (femaleGroupCounts[femaleGroupKey] || 0) + 1;
             });
-
-            const score = Math.round((totalScore / totalQuestions) * 100);
+            
+            const maxTotalScore = totalQuestions * 2;
+            const score = Math.round((totalScore / maxTotalScore) * 100);
             matchingScoreEl.textContent = `${score}%`;
             setTimeout(() => { scoreBarEl.style.width = `${score}%`; }, 100);
+            
+            const groupSimilarityScores = [];
+            for (const key in sensoryProfiles) {
+                const maleScore = maleGroupCounts[key] || 0;
+                const femaleScore = femaleGroupCounts[key] || 0;
+                const maxScore = Math.max(maleScore, femaleScore);
+                const minScore = Math.min(maleScore, femaleScore);
+                const similarity = maxScore > 0 ? Math.round((minScore / maxScore) * 100) : (maleScore === 0 && femaleScore === 0 ? 100 : 0);
+                groupSimilarityScores.push({
+                    key: key,
+                    category: sensoryProfiles[key].name,
+                    maleScore: maleScore,
+                    femaleScore: femaleScore,
+                    difference: Math.abs(maleScore - femaleScore),
+                    similarity: similarity
+                });
+            }
+            groupSimilarityScores.sort((a, b) => a.difference - b.difference);
+
+            let breakdownHTML = `<div class="bg-gray-100 p-4 rounded-lg">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 class="font-bold text-lg mb-2 text-center text-blue-700">🤵‍♂️ 남자 '결' 수치</h4>
+                                            <div class="space-y-2">`;
+            for (const key in sensoryProfiles) {
+                const score = maleGroupCounts[key] || 0;
+                breakdownHTML += `<div class="text-sm p-2 bg-white rounded shadow-sm flex justify-between"><span>${sensoryProfiles[key].name}:</span> <span class="font-bold">${score}</span></div>`;
+            }
+            breakdownHTML += `</div></div><div>
+                                            <h4 class="font-bold text-lg mb-2 text-center text-pink-700">👰‍♀️ 여자 '결' 수치</h4>
+                                            <div class="space-y-2">`;
+            for (const key in sensoryProfiles) {
+                const score = femaleGroupCounts[key] || 0;
+                breakdownHTML += `<div class="text-sm p-2 bg-white rounded shadow-sm flex justify-between"><span>${sensoryProfiles[key].name}:</span> <span class="font-bold">${score}</span></div>`;
+            }
+            breakdownHTML += `</div></div></div>
+                                    <div class="mt-6 pt-4 border-t">
+                                         <h4 class="font-bold text-lg mb-2 text-center text-indigo-700">💖 두 분의 성향 분포가 가장 비슷한 '결' TOP 3</h4>
+                                         <p class="text-xs text-center text-gray-500 mb-2">'결'별 수치 차이가 가장 적은 순서입니다.</p>
+                                         <div class="space-y-3">`;
+            groupSimilarityScores.slice(0, 3).forEach((item, index) => {
+                 breakdownHTML += `<div class="p-3 bg-white rounded-md shadow-sm">
+                                        <div class="flex justify-between items-center text-sm font-semibold">
+                                            <span><span class="font-bold text-indigo-600 mr-2">${index + 1}위</span>${item.category}</span>
+                                            <span class="font-bold text-indigo-500">${item.similarity}% 유사</span>
+                                        </div>
+                                        <div class="mt-2 w-full bg-gray-200 rounded-full h-4 relative flex items-center justify-center">
+                                            <div class="absolute top-0 left-0 w-full h-full flex justify-between items-center px-2 text-xs font-bold text-white z-10">
+                                                <span>🤵‍♂️ ${item.maleScore}</span>
+                                                <span>${item.femaleScore} 👰‍♀️</span>
+                                            </div>
+                                            <div class="bg-blue-400 h-4 rounded-l-full" style="width: ${item.similarity}%"></div>
+                                            <div class="bg-pink-400 h-4 rounded-r-full" style="width: ${100 - item.similarity}%"></div>
+                                        </div>
+                                     </div>`;
+            });
+            breakdownHTML += `</div></div></div>`;
+            scoreBreakdownEl.innerHTML = breakdownHTML;
 
             const dominantMaleGroupKey = Object.keys(maleGroupCounts).length > 0 ? Object.keys(maleGroupCounts).reduce((a, b) => maleGroupCounts[a] > maleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
             const dominantFemaleGroupKey = Object.keys(femaleGroupCounts).length > 0 ? Object.keys(femaleGroupCounts).reduce((a, b) => femaleGroupCounts[a] > femaleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
@@ -374,27 +494,24 @@
             const maleProfileData = sensoryProfiles[dominantMaleGroupKey];
             const femaleProfileData = sensoryProfiles[dominantFemaleGroupKey];
 
-            // Set Gradient
             combinedGradientEl.style.background = `linear-gradient(to right, ${maleProfileData.colorCode}, ${femaleProfileData.colorCode})`;
 
-            // Male Profile UI
             resultVisualMaleEl.className = `mt-4 p-6 rounded-lg transition-all duration-500 ${maleProfileData.background}`;
             resultProfileTextMaleEl.textContent = generateProfile(dominantMaleGroupKey);
-            resultGroupNameMaleEl.textContent = `남자는 '${maleProfileData.name}'의 결`;
+            resultGroupNameMaleEl.textContent = `남자는 '${maleProfileData.name}'`;
             resultGroupDescriptionMaleEl.textContent = maleProfileData.description;
             maleTagsEl.innerHTML = Object.entries(maleTags).sort((a, b) => b[1] - a[1]).map(([tag, count]) => `<span class="result-tag font-medium py-1 px-3 rounded-full text-sm">${tag}${count > 1 ? ` x${count}` : ''}</span>`).join('');
             
-            // Female Profile UI
             resultVisualFemaleEl.className = `mt-4 p-6 rounded-lg transition-all duration-500 ${femaleProfileData.background}`;
             resultProfileTextFemaleEl.textContent = generateProfile(dominantFemaleGroupKey);
-            resultGroupNameFemaleEl.textContent = `여자는 '${femaleProfileData.name}'의 결`;
+            resultGroupNameFemaleEl.textContent = `여자는 '${femaleProfileData.name}'`;
             resultGroupDescriptionFemaleEl.textContent = femaleProfileData.description;
             femaleTagsEl.innerHTML = Object.entries(femaleTags).sort((a, b) => b[1] - a[1]).map(([tag, count]) => `<span class="result-tag font-medium py-1 px-3 rounded-full text-sm">${tag}${count > 1 ? ` x${count}` : ''}</span>`).join('');
             
             if (dominantMaleGroupKey === dominantFemaleGroupKey) {
-                relationshipAdviceEl.textContent = `두 분은 같은 '${maleProfileData.name}' 성향으로, 핵심 가치관이 매우 유사하여 서로를 깊이 이해하는 커플입니다. 함께 있을 때 가장 편안하고 안정적인 관계를 만들어갈 수 있습니다.`;
+                relationshipAdviceEl.textContent = `두 분은 같은 '${maleProfileData.name}'으로, 핵심 가치관이 매우 유사하여 서로를 깊이 이해하는 커플입니다. 함께 있을 때 가장 편안하고 안정적인 관계를 만들어갈 수 있습니다.`;
             } else {
-                relationshipAdviceEl.textContent = `두 분은 각각 '${maleProfileData.name}', '${femaleProfileData.name}' 성향으로, 서로 다른 매력을 가졌습니다. 이 다름은 서로의 세계를 넓혀주고 함께 성장하는 좋은 자극이 될 것입니다. 서로의 '결'을 존중하고 배우는 자세가 중요합니다.`;
+                relationshipAdviceEl.textContent = `두 분은 각각 '${maleProfileData.name}', '${femaleProfileData.name}'으로, 서로 다른 매력을 가졌습니다. 이 다름은 서로의 세계를 넓혀주고 함께 성장하는 좋은 자극이 될 것입니다. 서로의 '결'을 존중하고 배우는 자세가 중요합니다.`;
             }
 
             questionSection.classList.add('hidden');
@@ -417,6 +534,7 @@
         calculateBtn.addEventListener('click', calculateResults);
 
         renderQuestions();
+        renderGroupDescriptions();
     </script>
 </body>
 </html>
