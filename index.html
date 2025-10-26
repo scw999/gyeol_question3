@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서로의 '결' 알아보기</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -192,77 +193,166 @@
             // --- 1) Action (나의 행동 유형) ---
             {
                 id: 'q1', brainType: 'Action (나의 행동 유형)', text: '인스타그램 스토리에 사진을 올린다면 어떤 사진을 선택하시겠어요?',
-                options: [ { text: '아름다운 자연경관에서 찍은 내 사진 (경험중시형)', tag: '#경험중시형'}, { text: '미슐랭 5스타 고급 레스토랑의 음식 사진 (성취지향형)', tag: '#성취지향형'}, { text: '친구들과 함께 파티를 즐기는 역동적인 사진 (사교형)', tag: '#사교형'}, { text: '인스타그램 스토리는 잘 올리지 않는 편이다 (안정지향형)', tag: '#안정지향형'} ]
+                options: [ 
+                    { text: '아름다운 자연경관에서 찍은 내 사진 (경험중시형)', tag: '#경험중시형'}, 
+                    { text: '미슐랭 5스타 고급 레스토랑의 음식 사진 (성취지향형)', tag: '#성취지향형'}, 
+                    { text: '친구들과 함께 파티를 즐기는 역동적인 사진 (사교형)', tag: '#사교형'}, 
+                    { text: '인스타그램 스토리는 잘 올리지 않는 편 (안정지향형)', tag: '#안정지향형'} 
+                ]
             },
             {
                 id: 'q2', brainType: 'Action (나의 행동 유형)', text: '선호하는 운동 스타일은 무엇인가요?',
-                options: [ { text: '혼자 집중하며 즐기는 운동 (러닝, 헬스 등) (자기계발형)', tag: '#자기계발형'}, { text: '파트너나 팀과 함께하는 운동 (테니스, 축구 등) (활동적인)', tag: '#활동적인'}, { text: '운동은 별로 즐기지 않는다 (정적인)', tag: '#정적인'} ]
+                options: [ 
+                    { text: '혼자 집중하며 즐기는 운동 (러닝, 헬스 등) (자기계발형)', tag: '#자기계발형'}, 
+                    { text: '파트너나 팀과 함께하는 운동 (테니스, 축구 등) (활동적인)', tag: '#활동적인'}, 
+                    { text: '운동은 별로 즐기지 않음 (정적인)', tag: '#정적인'} 
+                ]
             },
             {
                 id: 'q22', brainType: 'Action (나의 행동 유형)', text: '당신의 이상적인 주말은 어떤 모습에 가까운가요?',
-                options: [ { text: '집에서 편안하게 휴식을 취하며 재충전한다. (집순이/집돌이)', tag: '#집순이/집돌이'}, { text: '새로운 것을 배우거나 취미 활동에 몰두한다. (자기계발형)', tag: '#자기계발형'}, { text: '친구들을 만나거나 새로운 사람들과 어울린다. (사교형)', tag: '#사교형'}, { text: '가까운 곳으로 여행을 떠나 새로운 경험을 한다. (모험추구형)', tag: '#모험추구형'} ]
+                options: [ 
+                    { text: '집에서 편안하게 휴식을 취하며 재충전 (집순이/집돌이)', tag: '#집순이/집돌이'}, 
+                    { text: '새로운 것을 배우거나 취미 활동에 몰두 (자기계발형)', tag: '#자기계발형'}, 
+                    { text: '친구들을 만나거나 새로운 사람들과 어울림 (사교형)', tag: '#사교형'}, 
+                    { text: '가까운 곳으로 여행을 떠나 새로운 경험 (모험추구형)', tag: '#모험추구형'} 
+                ]
             },
             // --- 2) Emotion (나의 감정 및 관계 유형) ---
             {
                 id: 'q4', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '꿈꾸는 프러포즈는 어떤 모습인가요?',
-                options: [ { text: '분위기 좋은 레스토랑에서의 로맨틱한 프러포즈 (낭만주의형)', tag: '#낭만주의형'}, { text: '많은 사람들 앞에서의 깜짝 프러포즈 (이벤트선호)', tag: '#이벤트선호'}, { text: '둘만의 추억이 담긴 장소에서의 진솔한 프러포즈 (관계중심형)', tag: '#관계중심형'}, { text: '화려함보다 진심이 담긴 반지와 편지 (실용주의형)', tag: '#실용주의형'} ]
+                options: [ 
+                    { text: '분위기 좋은 레스토랑에서의 로맨틱한 프러포즈 (낭만주의형)', tag: '#낭만주의형'}, 
+                    { text: '많은 사람들 앞에서의 깜짝 프러포즈 (이벤트선호)', tag: '#이벤트선호'}, 
+                    { text: '둘만의 추억이 담긴 장소에서의 진솔한 프러포즈 (관계중심형)', tag: '#관계중심형'}, 
+                    { text: '화려함보다 진심이 담긴 반지와 편지 (실용주의형)', tag: '#실용주의형'} 
+                ]
             },
             {
                 id: 'q5', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '연인이 했을 때 가장 설레는 행동은 무엇인가요?',
-                options: [ { text: '내가 했던 말을 기억하고 세심하게 챙겨줄 때 (세심함중시)', tag: '#세심함중시'}, { text: '힘든 하루 끝에 말없이 꼭 안아줄 때 (스킨십중시)', tag: '#스킨십중시'}, { text: '나의 일이나 성과를 진심으로 응원하고 지지해줄 때 (정서적지지)', tag: '#정서적지지'}, { text: '함께 시간을 보낼 때 나에게 온전히 집중해줄 때 (시간공유형)', tag: '#시간공유형'} ]
+                options: [ 
+                    { text: '내가 했던 말을 기억하고 세심하게 챙겨줄 때 (세심함중시)', tag: '#세심함중시'}, 
+                    { text: '힘든 하루 끝에 말없이 꼭 안아줄 때 (스킨십중시)', tag: '#스킨십중시'}, 
+                    { text: '나의 일이나 성과를 진심으로 응원하고 지지해줄 때 (정서적지지)', tag: '#정서적지지'}, 
+                    { text: '함께 시간을 보낼 때 나에게 온전히 집중해줄 때 (시간공유형)', tag: '#시간공유형'} 
+                ]
             },
              {
                 id: 'q23', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '공공장소에서의 애정표현(스킨십)에 대해 어떻게 생각하시나요?',
-                options: [ { text: '손 잡는 것 정도는 괜찮지만, 그 이상은 조심스럽다. (보수적가치관)', tag: '#보수적가치관'}, { text: '주변에 피해만 주지 않는다면 자유롭게 표현할 수 있다. (자유로운표현)', tag: '#자유로운표현'}, { text: '애정표현은 둘만 있는 사적인 공간에서 하는 것이 좋다. (사생활중시)', tag: '#사생활중시'}, { text: '장소와 분위기에 따라 유연하게 달라질 수 있다. (상황적응형)', tag: '#상황적응형'} ]
+                options: [ 
+                    { text: '손 잡는 것 정도는 괜찮지만, 그 이상은 조심스러움 (보수적가치관)', tag: '#보수적가치관'}, 
+                    { text: '주변에 피해만 주지 않는다면 자유롭게 표현 가능 (자유로운표현)', tag: '#자유로운표현'}, 
+                    { text: '애정표현은 둘만 있는 사적인 공간에서 하는 것이 좋음 (사생활중시)', tag: '#사생활중시'}, 
+                    { text: '장소와 분위기에 따라 유연하게 달라질 수 있음 (상황적응형)', tag: '#상황적응형'} 
+                ]
             },
             {
                 id: 'q26', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '비 오는 날, 퇴근 시간에 맞춰 연인이 회사 앞에 우산을 들고 나타났습니다. 당신의 반응은?',
-                options: [ { text: '우와, 어떻게 알고 왔어? 와줘서 정말 고마워! (감정표현형)', tag: '#감정표현형'}, { text: '괜찮은데 왜 고생스럽게 왔어~ 걱정되잖아. (배려형)', tag: '#배려형'}, { text: '마침 보고 싶었는데, 이렇게 깜짝으로 보니 더 좋다! (낭만주의형)', tag: '#낭만주의형'}, { text: '잘 왔다! 이왕 만났으니 맛있는 거 먹으러 갈까? (실용주의형)', tag: '#실용주의형'} ]
+                options: [ 
+                    { text: '우와, 어떻게 알고 왔어? 와줘서 정말 고마워! (감정표현형)', tag: '#감정표현형'}, 
+                    { text: '괜찮은데 왜 고생스럽게 왔어~ 걱정되잖아 (배려형)', tag: '#배려형'}, 
+                    { text: '마침 보고 싶었는데, 이렇게 깜짝으로 보니 더 좋다! (낭만주의형)', tag: '#낭만주의형'}, 
+                    { text: '잘 왔다! 이왕 만났으니 맛있는 거 먹으러 갈까? (실용주의형)', tag: '#실용주의형'} 
+                ]
             },
             {
                 id: 'q17', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '내 연인이 내 친구의 깻잎을 떼주는 것을 보았습니다. 당신의 생각은?',
-                options: [ { text: '아무렇지 않다. 그럴 수 있다. (쿨한연애)', tag: '#쿨한연애'}, { text: '기분은 좀 그렇지만 티 내지 않는다. (감정조절형)', tag: '#감정조절형'}, { text: '연인에게 장난스럽게 서운함을 표현한다. (관계중심형)', tag: '#관계중심형'}, { text: '절대 안된다. 그 자리에서 이야기한다. (원칙주의형)', tag: '#원칙주의형'} ]
+                options: [ 
+                    { text: '아무렇지 않음. 그럴 수 있음 (쿨한연애)', tag: '#쿨한연애'}, 
+                    { text: '기분은 좀 그렇지만 티 내지 않음 (감정조절형)', tag: '#감정조절형'}, 
+                    { text: '연인에게 장난스럽게 서운함을 표현함 (관계중심형)', tag: '#관계중심형'}, 
+                    { text: '절대 안됨. 그 자리에서 이야기함 (원칙주의형)', tag: '#원칙주의형'} 
+                ]
             },
             {
                 id: 'q18', brainType: 'Emotion (나의 감정 및 관계 유형)', text: '선호하는 반려동물이 있나요?',
-                options: [ { text: '활동적이고 애교 많은 강아지가 좋다. (활동적인)', tag: '#활동적인'}, { text: '독립적이고 차분한 고양이가 좋다. (차분한)', tag: '#차분한'}, { text: '둘 다 좋지만, 키울 자신은 없다. (현실주의형)', tag: '#현실주의형'}, { text: '반려동물을 키우는 것은 선호하지 않는다. (개인주의형)', tag: '#개인주의형'} ]
+                options: [ 
+                    { text: '활동적이고 애교 많은 강아지가 좋음 (활동적인)', tag: '#활동적인'}, 
+                    { text: '독립적이고 차분한 고양이가 좋음 (차분한)', tag: '#차분한'}, 
+                    { text: '둘 다 좋지만, 키울 자신은 없음 (현실주의형)', tag: '#현실주의형'}, 
+                    { text: '반려동물을 키우는 것은 선호하지 않음 (개인주의형)', tag: '#개인주의형'} 
+                ]
             },
             // --- 3) Thinking (나의 가치관 및 생각 유형) ---
             {
                 id: 'q11', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '성공한 친구가 확실한 투자처라며 주식 정보를 주었습니다. 어떻게 하시겠어요?',
-                options: [ { text: '친구를 믿고 \'영끌\' 대출을 해서 투자한다 (과감한투자)', tag: '#과감한투자'}, { text: '현재 보유한 현금 전부를 투자한다 (공격적투자)', tag: '#공격적투자'}, { text: '여유 자금의 절반 정도만 신중하게 투자한다 (안정적투자)', tag: '#안정적투자'}, { text: '스스로 분석 없이는 투자하지 않는다 (원칙주의형)', tag: '#원칙주의형'} ]
+                options: [ 
+                    { text: '친구를 믿고 \'영끌\' 대출을 해서 투자 (과감한투자)', tag: '#과감한투자'}, 
+                    { text: '현재 보유한 현금 전부를 투자 (공격적투자)', tag: '#공격적투자'}, 
+                    { text: '여유 자금의 절반 정도만 신중하게 투자 (안정적투자)', tag: '#안정적투자'}, 
+                    { text: '스스로 분석 없이는 투자하지 않음 (원칙주의형)', tag: '#원칙주의형'} 
+                ]
             },
              {
                 id: 'q19', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '연인과 갈등이 생겼을 때, 당신은 어떻게 해결하나요?',
-                options: [ { text: '감정이 가라앉을 때까지 기다렸다가 차분히 대화한다. (논리적대화)', tag: '#논리적대화'}, { text: '갈등이 길어지는게 싫어 빨리 사과하고 넘어간다. (갈등회피형)', tag: '#갈등회피형'}, { text: '감정을 솔직하게 모두 표현해야 직성이 풀린다. (감정표현형)', tag: '#감정표현형'}, { text: '함께 문제를 분석하고 해결책을 찾으려 노력한다. (문제해결형)', tag: '#문제해결형'} ]
+                options: [ 
+                    { text: '감정이 가라앉을 때까지 기다렸다가 차분히 대화 (논리적대화)', tag: '#논리적대화'}, 
+                    { text: '갈등이 길어지는게 싫어 빨리 사과하고 넘어감 (갈등회피형)', tag: '#갈등회피형'}, 
+                    { text: '감정을 솔직하게 모두 표현해야 직성이 풀림 (감정표현형)', tag: '#감정표현형'}, 
+                    { text: '함께 문제를 분석하고 해결책을 찾으려 노력함 (문제해결형)', tag: '#문제해결형'} 
+                ]
             },
             {
                 id: 'q27', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '배우자가 청소기를 돌렸는데 구석에 먼지가 그대로 있습니다. 당신의 반응은?',
-                 options: [ { text: '우와, 청소해줬네! 정말 고마워~ (긍정적강화)', tag: '#긍정적강화'}, { text: '고마워! 다음엔 이쪽 구석도 한번 더 신경 써주면 완벽할 것 같아! (피드백제공)', tag: '#피드백제공'}, { text: '말없이 내가 직접 나머지 먼지를 청소한다. (갈등회피형)', tag: '#갈등회피형'}, { text: '그 정도는 괜찮아. 신경 쓰지 않는다. (자유로운)', tag: '#자유로운'} ]
+                 options: [ 
+                    { text: '우와, 청소해줬네! 정말 고마워~ (긍정적강화)', tag: '#긍정적강화'}, 
+                    { text: '고마워! 다음엔 이쪽 구석도 한번 더 신경 써주면 완벽할 것 같아! (피드백제공)', tag: '#피드백제공'}, 
+                    { text: '말없이 내가 직접 나머지 먼지를 청소함 (갈등회피형)', tag: '#갈등회피형'}, 
+                    { text: '그 정도는 괜찮음. 신경 쓰지 않음 (자유로운)', tag: '#자유로운'} 
+                ]
             },
             {
                 id: 'q24', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '결혼 후 양가 부모님 댁 방문 빈도는 어느 정도가 적당하다고 생각하시나요?',
-                options: [ { text: '명절이나 생신 등 특별한 날에만 방문한다. (독립성중시)', tag: '#독립성중시'}, { text: '한두 달에 한 번 정도는 정기적으로 찾아뵙는다. (가족중심형)', tag: '#가족중심형'}, { text: '정해진 것 없이, 필요하거나 원할 때 자유롭게 왕래한다. (자유추구형)', tag: '#자유추구형'}, { text: '가까이 살면서 자주 왕래하며 가깝게 지낸다. (관계중심형)', tag: '#관계중심형'} ]
+                options: [ 
+                    { text: '명절이나 생신 등 특별한 날에만 방문 (독립성중시)', tag: '#독립성중시'}, 
+                    { text: '한두 달에 한 번 정도는 정기적으로 방문 (가족중심형)', tag: '#가족중심형'}, 
+                    { text: '정해진 것 없이, 필요하거나 원할 때 자유롭게 왕래 (자유추구형)', tag: '#자유추구형'}, 
+                    { text: '가까이 살면서 자주 왕래하며 가깝게 지냄 (관계중심형)', tag: '#관계중심형'} 
+                ]
             },
              {
                 id: 'q25', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '가사(집안일) 분담에 대한 당신의 생각은?',
-                options: [ { text: '각자 잘하는 일을 정해서 명확하게 역할을 나눈다. (효율중시형)', tag: '#효율중시형'}, { text: '정해놓지 않고, 시간이 되거나 먼저 보는 사람이 한다. (자율형)', tag: '#자율형'}, { text: '주말 등 특정 시간을 정해 함께 집중적으로 처리한다. (계획형)', tag: '#계획형'}, { text: '가사도우미, 식기세척기 등 시스템을 적극 활용한다. (편리성추구)', tag: '#편리성추구'} ]
+                options: [ 
+                    { text: '각자 잘하는 일을 정해서 명확하게 역할을 나눔 (효율중시형)', tag: '#효율중시형'}, 
+                    { text: '정해놓지 않고, 시간이 되거나 먼저 보는 사람이 함 (자율형)', tag: '#자율형'}, 
+                    { text: '주말 등 특정 시간을 정해 함께 집중적으로 처리 (계획형)', tag: '#계획형'}, 
+                    { text: '가사도우미, 식기세척기 등 시스템을 적극 활용 (편리성추구)', tag: '#편리성추구'} 
+                ]
             },
             {
                 id: 'q12', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '이상적인 자녀 수는 몇 명인가요?',
-                options: [ { text: '딩크(DINK)족, 자녀 없이 둘만의 삶 (개인주의형)', tag: '#개인주의형'}, { text: '한 명의 자녀에게 집중 (계획형)', tag: '#계획형'}, { text: '안정적이고 화목한 두 명의 자녀 (가정중심형)', tag: '#가정중심형'}, { text: '다둥이 가정을 꿈꿔요 (다자녀선호)', tag: '#다자녀선호'} ]
+                options: [ 
+                    { text: '딩크(DINK)족, 자녀 없이 둘만의 삶 (개인주의형)', tag: '#개인주의형'}, 
+                    { text: '한 명의 자녀에게 집중 (계획형)', tag: '#계획형'}, 
+                    { text: '안정적이고 화목한 두 명의 자녀 (가정중심형)', tag: '#가정중심형'}, 
+                    { text: '다둥이 가정을 꿈꿈 (다자녀선호)', tag: '#다자녀선호'} 
+                ]
             },
             {
                 id: 'q13', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '선호하는 부부의 경제 활동 형태는 무엇인가요?',
-                options: [ { text: '각자의 커리어를 존중하는 맞벌이 (성장지향형)', tag: '#성장지향형'}, { text: '상황에 따라 유연하게, 가능하면 맞벌이 (상황적응형)', tag: '#상황적응형'}, { text: '한 사람은 경제활동, 한 사람은 가정을 돌보는 외벌이 (전통적가치관)', tag: '#전통적가치관'}, { text: '경제적 여유만 있다면, 자유롭게 살고 싶어요 (자유추구형)', tag: '#자유추구형'} ]
+                options: [ 
+                    { text: '각자의 커리어를 존중하는 맞벌이 (성장지향형)', tag: '#성장지향형'}, 
+                    { text: '상황에 따라 유연하게, 가능하면 맞벌이 (상황적응형)', tag: '#상황적응형'}, 
+                    { text: '한 사람은 경제활동, 한 사람은 가정을 돌보는 외벌이 (전통적가치관)', tag: '#전통적가치관'}, 
+                    { text: '경제적 여유만 있다면, 자유롭게 살고 싶음 (자유추구형)', tag: '#자유추구형'} 
+                ]
             },
             {
                 id: 'q15', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '당신이 결혼을 원하는 가장 큰 이유는 무엇인가요?',
-                options: [ { text: '정서적 안정감과 평생의 동반자를 얻기 위해 (안정지향형)', tag: '#안정지향형'}, { text: '사랑하는 사람과 가정을 꾸리기 위해 (가정중심형)', tag: '#가정중심형'}, { text: '더 나은 미래를 함께 계획하고 성장하기 위해 (성장지향형)', tag: '#성장지향형'}, { text: '함께 다양한 경험을 하며 인생을 더 즐겁게 살기 위해 (모험추구형)', tag: '#모험추구형'} ]
+                options: [ 
+                    { text: '정서적 안정감과 평생의 동반자를 얻기 위해 (안정지향형)', tag: '#안정지향형'}, 
+                    { text: '사랑하는 사람과 가정을 꾸리기 위해 (가정중심형)', tag: '#가정중심형'}, 
+                    { text: '더 나은 미래를 함께 계획하고 성장하기 위해 (성장지향형)', tag: '#성장지향형'}, 
+                    { text: '함께 다양한 경험을 하며 인생을 더 즐겁게 살기 위해 (모험추구형)', tag: '#모험추구형'} 
+                ]
             },
             {
                 id: 'q16', brainType: 'Thinking (나의 가치관 및 생각 유형)', text: '신혼집을 구한다면, 당신의 우선순위는 어디에 있나요?',
-                options: [ { text: '미래 가치를 보고 서울 중심지 아파트 (미래가치중시)', tag: '#미래가치중시'}, { text: '현재의 안정을 위해 경기도 신축 아파트 (현재안정중시)', tag: '#현재안정중시'}, { text: '직주근접이 가장 중요 (실용주의형)', tag: '#실용주의형'}, { text: '개인의 취향이 담긴 인테리어의 집 (심미주의형)', tag: '#심미주의형'} ]
+                options: [ 
+                    { text: '미래 가치를 보고 서울 중심지 아파트 선택 (미래가치중시)', tag: '#미래가치중시'}, 
+                    { text: '현재의 안정을 위해 경기도 신축 아파트 선택 (현재안정중시)', tag: '#현재안정중시'}, 
+                    { text: '직주근접이 가장 중요함 (실용주의형)', tag: '#실용주의형'}, 
+                    { text: '개인의 취향이 담긴 인테리어의 집을 원함 (심미주의형)', tag: '#심미주의형'} 
+                ]
             }
         ];
         
@@ -321,6 +411,10 @@
         const femaleTagsEl = document.getElementById('female-tags');
         
         const relationshipAdviceEl = document.getElementById('relationship-advice');
+
+        let maleRadarChart = null;
+        let femaleRadarChart = null;
+        let comparisonRadarChart = null;
 
         function findTagGroupKey(tag) {
             for (const key in tagGroups) {
@@ -382,6 +476,91 @@
             return `${texture} ${color} ${scent}의 ${shape}`;
         }
 
+        function createRadarChart(canvasId, label, data, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+             if (window[canvasId + 'ChartInstance']) { // Check if instance exists and destroy
+                window[canvasId + 'ChartInstance'].destroy();
+            }
+            const chartData = {
+                labels: Object.values(sensoryProfiles).map(p => p.name.split(' ')[0]), // ['감성', '이성', ...]
+                datasets: [{
+                    label: label,
+                    data: Object.keys(sensoryProfiles).map(key => data[key] || 0),
+                    backgroundColor: `rgba(${parseInt(color.slice(1, 3), 16)}, ${parseInt(color.slice(3, 5), 16)}, ${parseInt(color.slice(5, 7), 16)}, 0.2)`,
+                    borderColor: color,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: color
+                }]
+            };
+            const options = {
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: Math.max(...Object.values(data), 3) // Ensure axis goes high enough
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            };
+             window[canvasId + 'ChartInstance'] = new Chart(ctx, { type: 'radar', data: chartData, options: options }); // Store instance
+             return window[canvasId + 'ChartInstance'];
+        }
+        
+        function createComparisonRadarChart(canvasId, maleData, femaleData) {
+             const ctx = document.getElementById(canvasId).getContext('2d');
+             if (window[canvasId + 'ChartInstance']) { // Check if instance exists and destroy
+                window[canvasId + 'ChartInstance'].destroy();
+             }
+             const chartData = {
+                labels: Object.values(sensoryProfiles).map(p => p.name.split(' ')[0]),
+                datasets: [
+                    {
+                        label: '남자',
+                        data: Object.keys(sensoryProfiles).map(key => maleData[key] || 0),
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // Blue
+                        borderColor: '#3B82F6',
+                        pointBackgroundColor: '#3B82F6',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#3B82F6'
+                    },
+                     {
+                        label: '여자',
+                        data: Object.keys(sensoryProfiles).map(key => femaleData[key] || 0),
+                        backgroundColor: 'rgba(236, 72, 153, 0.2)', // Pink
+                        borderColor: '#EC4899',
+                        pointBackgroundColor: '#EC4899',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#EC4899'
+                    }
+                ]
+            };
+            const options = {
+                 scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: Math.max(...Object.values(maleData), ...Object.values(femaleData), 3)
+                    }
+                },
+                 plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            };
+            window[canvasId + 'ChartInstance'] = new Chart(ctx, { type: 'radar', data: chartData, options: options }); // Store instance
+            return window[canvasId + 'ChartInstance'];
+        }
+
+
         function calculateResults() {
             const totalQuestions = questions.length;
             const maleAnsweredCount = document.querySelectorAll('#male-questions input:checked').length;
@@ -430,6 +609,34 @@
             matchingScoreEl.textContent = `${score}%`;
             setTimeout(() => { scoreBarEl.style.width = `${score}%`; }, 100);
             
+             // Re-render score breakdown area before creating charts
+            scoreBreakdownEl.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    <div class="text-center">
+                        <h4 class="font-bold text-lg mb-2 text-blue-700">🤵‍♂️ 남자 '결' 분포</h4>
+                        <canvas id="maleRadarChart"></canvas>
+                    </div>
+                    <div class="text-center">
+                        <h4 class="font-bold text-lg mb-2 text-indigo-700">💖 두 분의 '결' 비교</h4>
+                        <canvas id="comparisonRadarChart"></canvas>
+                    </div>
+                    <div class="text-center">
+                         <h4 class="font-bold text-lg mb-2 text-pink-700">👰‍♀️ 여자 '결' 분포</h4>
+                        <canvas id="femaleRadarChart"></canvas>
+                    </div>
+                </div>
+                 <div class="mt-8 pt-4 border-t">
+                    <h4 class="font-bold text-lg mb-2 text-center text-indigo-700">📊 두 분의 성향 분포가 가장 비슷한 '결' TOP 3</h4>
+                    <p class="text-xs text-center text-gray-500 mb-2">'결'별 수치 차이가 가장 적은 순서입니다.</p>
+                    <div id="similarity-top3" class="space-y-3"></div>
+                 </div>
+            `;
+
+            // Create new radar charts
+            maleRadarChart = createRadarChart('maleRadarChart', '남자', maleGroupCounts, '#3B82F6');
+            femaleRadarChart = createRadarChart('femaleRadarChart', '여자', femaleGroupCounts, '#EC4899');
+            comparisonRadarChart = createComparisonRadarChart('comparisonRadarChart', maleGroupCounts, femaleGroupCounts);
+
             const groupSimilarityScores = [];
             for (const key in sensoryProfiles) {
                 const maleScore = maleGroupCounts[key] || 0;
@@ -446,47 +653,32 @@
                     similarity: similarity
                 });
             }
-            groupSimilarityScores.sort((a, b) => a.difference - b.difference);
+            groupSimilarityScores.sort((a, b) => {
+                if (a.difference !== b.difference) {
+                    return a.difference - b.difference;
+                }
+                return b.similarity - a.similarity;
+            });
 
-            let breakdownHTML = `<div class="bg-gray-100 p-4 rounded-lg">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <h4 class="font-bold text-lg mb-2 text-center text-blue-700">🤵‍♂️ 남자 '결' 수치</h4>
-                                            <div class="space-y-2">`;
-            for (const key in sensoryProfiles) {
-                const score = maleGroupCounts[key] || 0;
-                breakdownHTML += `<div class="text-sm p-2 bg-white rounded shadow-sm flex justify-between"><span>${sensoryProfiles[key].name}:</span> <span class="font-bold">${score}</span></div>`;
-            }
-            breakdownHTML += `</div></div><div>
-                                            <h4 class="font-bold text-lg mb-2 text-center text-pink-700">👰‍♀️ 여자 '결' 수치</h4>
-                                            <div class="space-y-2">`;
-            for (const key in sensoryProfiles) {
-                const score = femaleGroupCounts[key] || 0;
-                breakdownHTML += `<div class="text-sm p-2 bg-white rounded shadow-sm flex justify-between"><span>${sensoryProfiles[key].name}:</span> <span class="font-bold">${score}</span></div>`;
-            }
-            breakdownHTML += `</div></div></div>
-                                    <div class="mt-6 pt-4 border-t">
-                                         <h4 class="font-bold text-lg mb-2 text-center text-indigo-700">💖 두 분의 성향 분포가 가장 비슷한 '결' TOP 3</h4>
-                                         <p class="text-xs text-center text-gray-500 mb-2">'결'별 수치 차이가 가장 적은 순서입니다.</p>
-                                         <div class="space-y-3">`;
+            let top3HTML = '';
             groupSimilarityScores.slice(0, 3).forEach((item, index) => {
-                 breakdownHTML += `<div class="p-3 bg-white rounded-md shadow-sm">
-                                        <div class="flex justify-between items-center text-sm font-semibold">
+                const maleBarWidth = item.maleScore + item.femaleScore > 0 ? (item.maleScore / (item.maleScore + item.femaleScore)) * 100 : 50;
+                 top3HTML += `<div class="p-3 bg-white rounded-md shadow-sm border border-gray-200">
+                                        <div class="flex justify-between items-center text-sm font-semibold mb-2">
                                             <span><span class="font-bold text-indigo-600 mr-2">${index + 1}위</span>${item.category}</span>
                                             <span class="font-bold text-indigo-500">${item.similarity}% 유사</span>
                                         </div>
-                                        <div class="mt-2 w-full bg-gray-200 rounded-full h-4 relative flex items-center justify-center">
-                                            <div class="absolute top-0 left-0 w-full h-full flex justify-between items-center px-2 text-xs font-bold text-white z-10">
+                                        <div class="w-full bg-pink-200 flex rounded-full h-5 overflow-hidden relative">
+                                            <div class="absolute top-0 left-0 w-full h-full flex justify-between items-center px-2 text-xs font-bold text-white z-10 pointer-events-none">
                                                 <span>🤵‍♂️ ${item.maleScore}</span>
                                                 <span>${item.femaleScore} 👰‍♀️</span>
                                             </div>
-                                            <div class="bg-blue-400 h-4 rounded-l-full" style="width: ${item.similarity}%"></div>
-                                            <div class="bg-pink-400 h-4 rounded-r-full" style="width: ${100 - item.similarity}%"></div>
+                                            <div class="bg-blue-400 h-5" style="width: ${maleBarWidth}%"></div>
                                         </div>
                                      </div>`;
             });
-            breakdownHTML += `</div></div></div>`;
-            scoreBreakdownEl.innerHTML = breakdownHTML;
+            document.getElementById('similarity-top3').innerHTML = top3HTML;
+
 
             const dominantMaleGroupKey = Object.keys(maleGroupCounts).length > 0 ? Object.keys(maleGroupCounts).reduce((a, b) => maleGroupCounts[a] > maleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
             const dominantFemaleGroupKey = Object.keys(femaleGroupCounts).length > 0 ? Object.keys(femaleGroupCounts).reduce((a, b) => femaleGroupCounts[a] > femaleGroupCounts[b] ? a : b) : 'ADAPTIVE_BALANCED';
@@ -524,6 +716,11 @@
         }
         
         retryBtn.addEventListener('click', () => {
+             // Destroy charts before hiding results
+            if (maleRadarChart) maleRadarChart.destroy();
+            if (femaleRadarChart) femaleRadarChart.destroy();
+            if (comparisonRadarChart) comparisonRadarChart.destroy();
+
             resultsContainer.classList.add('hidden');
             questionSection.classList.remove('hidden');
             const allRadios = document.querySelectorAll('input[type="radio"]');
